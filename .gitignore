@@ -1,0 +1,27 @@
+# dependencies and deploy tooling
+node_modules/
+.vercel/
+
+# secrets
+.env
+.env.*
+
+# local editor and assistant config
+.claude/
+.vscode/
+.idea/
+
+# OS clutter
+.DS_Store
+Thumbs.db
+
+# raw Instagram downloads: the site only uses the logo from here
+assets/ig/*
+!assets/ig/logo-profile.jpg
+
+# crops that did not pass the sharpness bar and are not on any page
+assets/img/ezviz-wall.jpg
+assets/img/gate-lock.jpg
+assets/img/moorgen-range.jpg
+assets/img/moorgen-t9.jpg
+assets/img/orbita-wall.jpg

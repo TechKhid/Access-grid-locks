@@ -1,0 +1,68 @@
+    <section class="page-head page-head--tight">
+      <div class="hero__grid" aria-hidden="true"></div>
+      <div class="wrap">
+        <p class="crumb mono"><a href="index.html">Home</a> / Get a quote</p>
+        <h1>Tell us about<br><em>your doors.</em></h1>
+        <p class="sec-head__lede">Four taps. Your request lands in our WhatsApp already written, so we can come back with the right lock and the right price — not twenty questions.</p>
+      </div>
+    </section>
+
+    <section class="quote" id="quote">
+      <div class="wrap quote__inner">
+        <form class="builder" id="builder" data-reveal novalidate>
+          <fieldset>
+            <legend><span class="mono">1</span>What kind of space?</legend>
+            <div class="chips" data-group="space" data-mode="single">
+              <button type="button" class="chip is-on" data-v="Home">Home</button>
+              <button type="button" class="chip" data-v="Apartments / short-let">Apartments / short-let</button>
+              <button type="button" class="chip" data-v="Hotel / guesthouse">Hotel / guesthouse</button>
+              <button type="button" class="chip" data-v="Office">Office</button>
+              <button type="button" class="chip" data-v="Estate / development">Estate / development</button>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend><span class="mono">2</span>What do you need?</legend>
+            <div class="chips" data-group="needs" data-mode="multi">
+              <button type="button" class="chip is-on" data-v="Smart locks">Smart locks</button>
+              <button type="button" class="chip" data-v="Hotel lock system">Hotel lock system</button>
+              <button type="button" class="chip" data-v="Smart CCTV">Smart CCTV</button>
+              <button type="button" class="chip" data-v="Access control">Access control</button>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend><span class="mono">3</span>How many doors?</legend>
+            <div class="doors">
+              <button type="button" class="doors__btn" data-step="-1" aria-label="Fewer doors">−</button>
+              <output id="doorsOut" class="doors__n" aria-live="polite">2</output>
+              <button type="button" class="doors__btn" data-step="1" aria-label="More doors">+</button>
+              <input id="doorsRange" class="doors__range" type="range" min="1" max="200" value="2" aria-label="Number of doors">
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend><span class="mono">4</span>Where, and who should we reply to? <small>optional</small></legend>
+            <div class="fields">
+              <label class="field"><span class="mono">Area</span><input type="text" id="fArea" placeholder="e.g. Weija" autocomplete="address-level2" maxlength="60"></label>
+              <label class="field"><span class="mono">Name</span><input type="text" id="fName" placeholder="Your name" autocomplete="given-name" maxlength="60"></label>
+            </div>
+          </fieldset>
+          <div class="preview">
+            <p class="preview__label mono">Your WhatsApp message</p>
+            <pre class="preview__bubble" id="msgPreview"></pre>
+          </div>
+          <a class="btn btn--wa" id="waSend" href="https://wa.me/233205876328" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#wa"/></svg>Send on WhatsApp</a>
+          <p class="builder__fine mono">Opens WhatsApp with the message ready. Nothing is sent until you press send.</p>
+        </form>
+
+        <div class="quote__intro">
+          <p class="eyebrow mono" data-reveal>What happens next</p>
+          <ol class="steps" data-reveal>
+            <li><span class="mono">01</span>You tell us the space</li>
+            <li><span class="mono">02</span>We recommend and quote</li>
+            <li><span class="mono">03</span>We install and set it up</li>
+            <li><span class="mono">04</span>We stay one message away</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <a class="next" href="showroom.html"><span class="wrap"><span class="mono">Next</span><b>Visit the showroom</b><i aria-hidden="true">→</i></span></a>

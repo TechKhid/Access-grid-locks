@@ -1,0 +1,29 @@
+<!-- Entrance: touch the sensor and the page opens outward from it. Home page only, once per visit. -->
+<div class="gate" id="gate">
+  <div class="gate__top mono">
+    <img src="assets/img/logo-white.png" width="130" height="63" alt="AccessGrid Solutions Ltd">
+    <span>Accra · GH</span>
+  </div>
+
+  <div class="gate__center">
+    <p class="gate__eyebrow mono">The smart lock experts</p>
+    <p class="gate__title">This door has<br>no keyhole.</p>
+
+    <button class="reader" id="reader" type="button" aria-label="Touch the fingerprint reader to enter the site">
+      <svg class="reader__ring" viewBox="0 0 120 120" aria-hidden="true">
+        <circle cx="60" cy="60" r="56"/>
+        <circle class="reader__progress" cx="60" cy="60" r="56"/>
+      </svg>
+      <svg class="reader__print" viewBox="0 0 24 24" aria-hidden="true">
+        <g class="reader__print-base"><use href="#fp"/></g>
+        <g class="reader__print-live"><use href="#fp"/></g>
+      </svg>
+      <span class="reader__sweep" aria-hidden="true"></span>
+    </button>
+
+    <p class="gate__hint mono" id="gateHint" aria-live="polite">Touch the sensor to enter</p>
+  </div>
+
+  <button class="gate__skip mono" id="gateSkip" type="button">Skip intro →</button>
+</div>
+<div class="gate-ring" id="gateRing" aria-hidden="true"></div>
