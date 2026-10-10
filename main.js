@@ -40,6 +40,98 @@
   root.classList.add('js');
   if (!window.CSS || !CSS.registerProperty) root.classList.add('no-iris');
 
+  /* ───────── Visit notifications ─────────
+     Reports what a visitor does to /api/track, which forwards it to ntfy (see api/track.js).
+     - Tag a link you send someone: add ?for=Name and their visits are labelled with it.
+     - Stop your own device from reporting: open any page once with ?notrack=1 (undo with ?notrack=0).
+     Nothing typed into the checkout or quote forms (names, phone numbers, areas) is ever sent. */
+  const visit = (() => {
+    const PAGES = { index: 'Home', shop: 'Shop', 'smart-locks': 'Smart locks', hotels: 'Hotels', cctv: 'CCTV', quote: 'Quote', showroom: 'Showroom' };
+    const page = PAGES[document.body.dataset.page] || document.title;
+    const params = new URLSearchParams(location.search);
+    const read = (area, key) => { try { return JSON.parse(area.getItem(key)); } catch { return null; } };
+    const write = (area, key, value) => { try { area.setItem(key, JSON.stringify(value)); } catch { /* private mode */ } };
+
+    if (params.has('notrack')) write(localStorage, 'accessgrid-notrack', params.get('notrack') !== '0');
+    const off = read(localStorage, 'accessgrid-notrack') === true;
+
+    // a random id so a returning visitor can be recognised; no name unless the link carried ?for=
+    const visitor = read(localStorage, 'accessgrid-visitor') || { id: Math.random().toString(36).slice(2, 6), visits: 0, label: '' };
+    const label = (params.get('for') || '').replace(/[^\w .'-]/g, '').trim().slice(0, 40);
+    if (label) visitor.label = label;
+
+    let s = read(sessionStorage, 'accessgrid-visit');
+    const arriving = !s;
+    if (arriving) {
+      visitor.visits += 1;
+      let ref = '';
+      try { ref = document.referrer && new URL(document.referrer).host !== location.host ? new URL(document.referrer).host : ''; } catch { /* odd referrer */ }
+      s = { active: 0, pages: [], actions: [], sent: '', ref };
+    }
+    visitor.visits = Math.max(1, visitor.visits);
+    write(localStorage, 'accessgrid-visitor', visitor);
+    if (s.pages[s.pages.length - 1] !== page) s.pages.push(page);
+    const save = () => write(sessionStorage, 'accessgrid-visit', s);
+    save();
+
+    const post = (payload) => {
+      if (off) return;
+      const body = JSON.stringify({ ...payload, visitor, page });
+      try { if (navigator.sendBeacon && navigator.sendBeacon('/api/track', new Blob([body], { type: 'text/plain' }))) return; } catch { /* fall through */ }
+      fetch('/api/track', { method: 'POST', body, keepalive: true }).catch(() => {});
+    };
+    if (arriving) post({ type: 'arrive', ref: s.ref });
+
+    // time counts only while the page is actually on screen
+    let since = document.visibilityState === 'visible' ? Date.now() : 0;
+    const bank = () => { if (since) { s.active += Date.now() - since; since = 0; } };
+
+    // moving to another page of the site is not leaving, so it sends no summary
+    let internal = false;
+    const lastHot = {};
+    function track(action, opts = {}) {
+      if (opts.once && s.actions.includes(action)) return;
+      if (s.actions[s.actions.length - 1] !== action && s.actions.length < 40) s.actions.push(action);
+      save();
+      if (!opts.hot || Date.now() - (lastHot[opts.hot] || 0) < 20000) return;
+      lastHot[opts.hot] = Date.now();
+      post({ type: 'event', name: opts.hot, detail: opts.detail || action });
+    }
+
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href]');
+      if (!a) return;
+      if (a.origin === location.origin && a.target !== '_blank' && a.pathname !== location.pathname) {
+        internal = true;
+        setTimeout(() => { internal = false; }, 1500);
+        return;
+      }
+      const text = a.textContent.trim().replace(/\s+/g, ' ').slice(0, 60);
+      if (a.id === 'waSend') return; // the quote builder reports this one with its details
+      if (a.id === 'doneWa') track('Sent the order to WhatsApp', { hot: 'whatsapp', detail: 'Sent their order message' });
+      else if (a.host === 'wa.me') track('Tapped WhatsApp', { hot: 'whatsapp', detail: text || 'WhatsApp button' });
+      else if (a.protocol === 'tel:') track('Tapped call', { hot: 'call', detail: text });
+      else if (a.host.includes('google.') && a.pathname.includes('/maps')) track('Asked for directions', { hot: 'directions', detail: 'Opened Google Maps for the showroom' });
+      else if (a.host.includes('instagram.com')) track('Opened Instagram', { once: true });
+    }, true);
+
+    const summarise = () => {
+      bank();
+      save();
+      if (internal) return;
+      const mark = `${s.pages.length}|${s.actions.length}|${Math.floor(s.active / 30000)}`;
+      if (mark === s.sent) return; // nothing new since the last summary
+      if (s.active < 3000 && !s.actions.length && s.pages.length < 2) return; // a glance is already covered by the arrival note
+      post({ type: 'summary', seconds: Math.round(s.active / 1000), pages: s.pages, actions: s.actions, update: Boolean(s.sent) });
+      s.sent = mark;
+      save();
+    };
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') summarise(); else since = Date.now(); });
+    addEventListener('pagehide', summarise);
+
+    return { track };
+  })();
+
   /* ───────── Lock component ───────── */
   const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#'];
   const SCAN_LABEL = { finger: 'Reading', code: '', card: 'Card', app: 'App', key: 'Key' };
@@ -121,6 +213,7 @@
     document.body.classList.toggle('menu-open', open);
     menuBtn.setAttribute('aria-expanded', open);
     menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    if (open) visit.track('Opened the menu', { once: true });
   }
   menuBtn.addEventListener('click', () => setMenu(menu.hidden));
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) setMenu(false); });
@@ -173,6 +266,7 @@
     function scanAndOpen() {
       if (gateBusy) return;
       gateBusy = true;
+      visit.track('Touched the sensor to enter');
       reader.classList.add('is-scanning');
       hint.textContent = 'Reading fingerprint…';
       buzz(15);
@@ -195,11 +289,15 @@
       site.inert = true;
       reader.addEventListener('pointerdown', scanAndOpen);
       reader.addEventListener('click', scanAndOpen); // keyboard and assistive tech
-      $('#gateSkip').addEventListener('click', () => { if (!gateBusy) { gateBusy = true; openFromSensor(); } });
+      $('#gateSkip').addEventListener('click', () => { if (!gateBusy) { gateBusy = true; visit.track('Skipped the intro'); openFromSensor(); } });
     }
 
     // Tapping the hero lock opens it, so there is something to do on a phone straight away.
-    heroLock.addEventListener('click', () => { if (heroLock.dataset.state === 'locked') play(heroLock, 'finger'); });
+    heroLock.addEventListener('click', () => {
+      if (heroLock.dataset.state !== 'locked') return;
+      visit.track('Tapped the hero lock', { once: true });
+      play(heroLock, 'finger');
+    });
 
     // Desktop: the lock follows the cursor. Phones: it follows the tilt of the device where the browser allows it.
     const setTilt = (x, y) => {
@@ -247,6 +345,7 @@
       const btn = e.target.closest('[data-add]');
       if (!btn) return;
       changeQty(btn.dataset.add, 1);
+      visit.track(`Added ${fullName(byId(btn.dataset.add))} to cart`);
       buzz(12);
       btn.textContent = 'Added ✓';
       btn.classList.add('is-added');
@@ -318,6 +417,7 @@
   }
   function openDrawer() {
     setMenu(false);
+    visit.track('Opened the cart', { once: true });
     lastFocus = document.activeElement;
     showView('cart');
     drawer.hidden = false;
@@ -332,7 +432,12 @@
   $$('[data-cart-open]').forEach((b) => b.addEventListener('click', openDrawer));
   drawer.addEventListener('click', (e) => { if (e.target.closest('[data-close]')) closeDrawer(); });
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !drawer.hidden) closeDrawer(); });
-  $('#toCheckout').addEventListener('click', () => { showView('checkout'); updatePayButton(); $('#coName').focus(); });
+  $('#toCheckout').addEventListener('click', () => {
+    visit.track('Started checkout', { hot: 'checkout', detail: `${money(total())} · ${lines().map((l) => `${l.qty} × ${fullName(l.p)}`).join(', ')}` });
+    showView('checkout');
+    updatePayButton();
+    $('#coName').focus();
+  });
   $('#backToCart').addEventListener('click', () => showView('cart'));
 
   /* ───────── Checkout ───────── */
@@ -446,6 +551,8 @@
     $('#doneTotal').textContent = money(order.total);
     $('#doneDemo').hidden = !demo;
     $('#doneWa').href = waLink(orderMessage(order, paidNote));
+    // the visitor's name, phone and area stay out of the notification on purpose
+    visit.track('Placed an order', { hot: 'order', detail: `${order.ref} · ${money(order.total)} · ${order.items.map((l) => `${l.qty} × ${fullName(l.p)}`).join(', ')} · ${order.fulfil} · paid ${paidNote}` });
     buzz([20, 40, 30]);
 
     cart = {};
@@ -470,7 +577,10 @@
         b.setAttribute('aria-pressed', on);
         if (on) waysDesc.textContent = $('em', b).textContent;
       });
-      if (run) play(demoLock, way);
+      if (run) {
+        visit.track(`Tried the ${{ finger: 'fingerprint', code: 'PIN code', card: 'RFID card', app: 'Tuya app', key: 'key' }[way]} unlock`);
+        play(demoLock, way);
+      }
     };
     wayButtons.forEach((b) => b.addEventListener('click', () => selectWay(b.dataset.way)));
     selectWay('finger', false);
@@ -491,7 +601,9 @@
       const entered = code;
       code = '';
       clearTimeout(codeIdle);
-      if (entered) later(demoLock, () => (entered === '1957' ? grant(demoLock) : deny(demoLock)), 220);
+      if (!entered) return;
+      visit.track(entered === '1957' ? 'Typed the right PIN on the keypad' : 'Typed a wrong PIN on the keypad');
+      later(demoLock, () => (entered === '1957' ? grant(demoLock) : deny(demoLock)), 220);
     };
     $$('.lock__key', demoLock).forEach((k) => k.addEventListener('click', () => {
       const v = k.dataset.k;
@@ -551,7 +663,7 @@
         room.el.type = 'button';
         room.el.className = 'room';
         room.el.innerHTML = `<span>${room.no}</span><i></i>`;
-        room.el.addEventListener('click', () => { selected = room; buzz(8); paint(); });
+        room.el.addEventListener('click', () => { selected = room; buzz(8); visit.track('Explored the hotel room grid', { once: true }); paint(); });
         roomsEl.append(room.el);
         rooms.push(room);
       }
@@ -652,6 +764,7 @@
     doorsRange.addEventListener('input', () => setDoors(Number(doorsRange.value)));
     [fArea, fName].forEach((f) => f.addEventListener('input', render));
     $('#builder').addEventListener('submit', (e) => e.preventDefault());
+    $('#waSend').addEventListener('click', () => visit.track('Sent a quote request', { hot: 'quote', detail: `${quote.space} · ${[...quote.needs].join(', ') || 'not sure yet'} · ${quote.doors >= 200 ? '200+' : quote.doors} doors` }));
     render();
   }
 })();

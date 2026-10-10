@@ -4,6 +4,9 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { build } = require('./build');
+const track = require('./api/track');
+
+try { process.loadEnvFile(path.join(__dirname, '.env.local')); } catch { /* no local env file: notifications are only logged */ }
 
 const ROOT = __dirname;
 const PORT = Number(process.env.PORT) || 4173;
@@ -13,6 +16,7 @@ build();
 http.createServer((req, res) => {
   const urlPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
   const file = path.join(ROOT, path.normalize(urlPath === '/' ? '/index.html' : urlPath));
+  if (urlPath === '/api/track') { track(req, res); return; }
   if (!file.startsWith(ROOT)) { res.writeHead(403).end(); return; }
   if (file.endsWith('.html')) { try { build(); } catch (err) { console.error(err.message); } }
   fs.readFile(file, (err, data) => {
