@@ -1,9 +1,14 @@
-// Assembles the static pages: src/layout.html + src/pages/<page>.html → <page>.html in the project root.
-// Run `node build.js` after editing anything in src/. `node serve.js` does it for you on every page load.
+// Assembles the site into public/, which is what gets deployed:
+//   src/layout.html + src/pages/<page>.html → public/<page>.html
+//   src/styles.css, src/main.js             → public/
+//   only the images the pages actually use  → public/assets/
+// Run `node build.js` (or `npm run build`). `node serve.js` does it for you on every page load.
 const fs = require('fs');
 const path = require('path');
 
-const SRC = path.join(__dirname, 'src');
+const ROOT = __dirname;
+const SRC = path.join(ROOT, 'src');
+const OUT = path.join(ROOT, 'public');
 const read = (f) => fs.readFileSync(path.join(SRC, f), 'utf8');
 const NAME = 'AccessGrid Solutions';
 
@@ -23,20 +28,42 @@ const PAGES = [
   { id: 'showroom', title: `Visit the showroom — ${NAME}`,
     desc: 'Adjacent Latex Foam, Ayigbe Town Junction (Mile 11), near West Hills Mall, Accra. Come and try the locks yourself.' },
 ];
+const STATIC = ['styles.css', 'main.js'];
 
-function build() {
+function build({ clean = false } = {}) {
+  if (clean) fs.rmSync(OUT, { recursive: true, force: true });
+  fs.mkdirSync(OUT, { recursive: true });
+
   const layout = read('layout.html');
   const gate = read('gate.html');
+  let everything = layout + gate;
   for (const page of PAGES) {
     const home = page.id === 'index';
-    const fill = { title: page.title, desc: page.desc, page: page.id, bodyClass: home ? 'is-gated' : 'is-open', gate: home ? gate : '', content: read(`pages/${page.id}.html`) };
+    const content = read(`pages/${page.id}.html`);
+    everything += content;
+    const fill = { title: page.title, desc: page.desc, page: page.id, bodyClass: home ? 'is-gated' : 'is-open', gate: home ? gate : '', content };
     const html = layout
       .replace(/\{\{(\w+)\}\}/g, (m, key) => (key in fill ? fill[key] : m))
       .split(`data-nav="${page.id}"`).join(`data-nav="${page.id}" aria-current="page"`);
-    fs.writeFileSync(path.join(__dirname, `${page.id}.html`), html);
+    fs.writeFileSync(path.join(OUT, `${page.id}.html`), html);
   }
-  return PAGES.length;
+  for (const file of STATIC) {
+    everything += read(file);
+    fs.copyFileSync(path.join(SRC, file), path.join(OUT, file));
+  }
+  // Ship an image only if something refers to it, so nothing unused is ever published.
+  const used = new Set(everything.match(/assets\/[\w./-]+\.(?:jpe?g|png|webp|svg|ico)/g) || []);
+  for (const rel of used) {
+    const from = path.join(ROOT, rel);
+    if (!fs.existsSync(from)) throw new Error(`Missing image referenced by the site: ${rel}`);
+    fs.mkdirSync(path.dirname(path.join(OUT, rel)), { recursive: true });
+    fs.copyFileSync(from, path.join(OUT, rel));
+  }
+  return { pages: PAGES.length, images: used.size };
 }
 
-module.exports = { build };
-if (require.main === module) console.log(`Built ${build()} pages`);
+module.exports = { build, OUT };
+if (require.main === module) {
+  const { pages, images } = build({ clean: true });
+  console.log(`Built ${pages} pages and ${images} images into public/`);
+}
