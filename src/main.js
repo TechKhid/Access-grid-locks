@@ -231,8 +231,26 @@
     const hint = $('#gateHint');
     let gateBusy = false;
 
-    const hour = new Date().getHours();
-    $('#greeting').textContent = `Access granted · ${hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'}`;
+    // The line above the headline answers the entrance once: "Access granted", a greeting,
+    // then it settles into a plain label and stays that way. Later visits just see the label.
+    const status = $('#heroStatus');
+    const statusText = $('#heroStatusText');
+    const label = statusText.textContent;
+    async function greet() {
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      const hour = new Date().getHours();
+      const lines = [['Access granted', 'ok'], [hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening', ''], [label, '']];
+      status.classList.add('is-typing');
+      for (const [text, tone] of lines) {
+        status.dataset.tone = tone;
+        for (let i = 0; i <= text.length; i++) { statusText.textContent = text.slice(0, i); await wait(26); }
+        if (text === label) break;
+        await wait(950);
+        for (let i = text.length; i >= 0; i--) { statusText.textContent = text.slice(0, i); await wait(12); }
+        await wait(160);
+      }
+      status.classList.remove('is-typing');
+    }
 
     // the hero lock is the door you just came through: open, then it locks itself
     function settle() {
@@ -255,6 +273,7 @@
         window.scrollTo(0, 0);
         document.body.classList.add('is-opening');
         settle();
+        if (!reduceMotion) setTimeout(greet, 450);
         setTimeout(() => {
           gate.hidden = true;
           ring.hidden = true;

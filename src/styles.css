@@ -162,8 +162,11 @@ body.menu-open .nav__menu i:last-child { transform: rotate(-45deg); }
 .hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; padding-top: 96px; overflow: hidden; }
 .hero__grid { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 76px 76px; background-position: center top; -webkit-mask-image: radial-gradient(70% 70% at 72% 42%, #000 0%, transparent 78%); mask-image: radial-gradient(70% 70% at 72% 42%, #000 0%, transparent 78%); }
 .hero__inner { position: relative; flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: clamp(24px, 5vw, 90px); padding-block: 32px; }
-.pill { display: inline-flex; align-items: center; gap: 10px; padding: 9px 14px; border: 1px solid var(--line-2); border-radius: 99px; color: #c9c6bf; }
-.pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 12px var(--ok); }
+/* one plain line above the headline: it types a greeting once on arrival, then stays as a label */
+.hero__status { display: flex; align-items: center; gap: .5em; min-height: 1.5em; color: var(--yellow); transition: color .3s; }
+.hero__status[data-tone="ok"] { color: var(--ok); }
+.caret { display: none; width: .55em; height: 1.1em; background: currentColor; }
+.hero__status.is-typing .caret { display: block; animation: blink .7s steps(2) infinite; }
 .hero__title { margin: 26px 0 30px; font: 600 clamp(4.2rem, 13.2vw, 11.5rem)/.86 var(--display); letter-spacing: -.035em; }
 .hero__title em { font-style: normal; color: var(--yellow); }
 .line { display: block; overflow: hidden; padding-bottom: .14em; margin-bottom: -.14em; }
@@ -171,11 +174,11 @@ body.menu-open .nav__menu i:last-child { transform: rotate(-45deg); }
 .hero__lede { max-width: 33em; font-size: clamp(1.02rem, 1.35vw, 1.2rem); color: #c2bfb8; }
 .hero__lede b { color: var(--text); }
 .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
-.pill, .hero__lede, .hero__cta, .hero__device, .hero__specs { opacity: 0; transform: translateY(18px); }
+.hero__status, .hero__lede, .hero__cta, .hero__device, .hero__specs { opacity: 0; transform: translateY(18px); }
 body.is-open .line > span { transform: none; transition: transform 1.1s var(--ease) .25s; }
 body.is-open .line:nth-child(2) > span { transition-delay: .37s; }
-body.is-open :is(.pill, .hero__lede, .hero__cta, .hero__device, .hero__specs) { opacity: 1; transform: none; transition: opacity .9s ease, transform .9s var(--ease); }
-body.is-open .pill { transition-delay: .15s; }
+body.is-open :is(.hero__status, .hero__lede, .hero__cta, .hero__device, .hero__specs) { opacity: 1; transform: none; transition: opacity .9s ease, transform .9s var(--ease); }
+body.is-open .hero__status { transition-delay: .15s; }
 body.is-open .hero__lede { transition-delay: .6s; }
 body.is-open .hero__cta { transition-delay: .72s; }
 body.is-open .hero__device { transition-delay: .35s; }
@@ -731,7 +734,7 @@ body.is-open .fab { transform: scale(1); }
   /* hero: headline, then the lock, then the buttons — the lock is in the first screen */
   .hero__inner { gap: 0; padding-block: 16px 8px; }
   .hero__copy { display: contents; }
-  .pill { order: 1; justify-self: start; }
+  .hero__status { order: 1; }
   .hero__title { order: 2; }
   .hero__lede { order: 3; font-size: 1rem; }
   .hero__device { order: 4; padding: 30px 0 0; }
