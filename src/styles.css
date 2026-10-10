@@ -437,6 +437,16 @@ html.js .feed[data-reveal].is-in .notif { transform: none; opacity: 1; }
 .field input { width: 100%; padding: .9em 1em; border-radius: 10px; border: 1px solid var(--line-2); background: var(--ink); color: var(--text); font: inherit; }
 .field input::placeholder { color: #5f5d58; }
 .field input:focus { outline: none; border-color: var(--yellow); }
+/* share-my-location control: used in checkout and the quote builder */
+.pin { display: grid; gap: 8px; justify-items: start; }
+.pin[hidden], .pin__btn[hidden], .pin__note[hidden] { display: none; }
+.builder .pin { margin-top: 14px; }
+.pin__btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 8px; box-shadow: inset 0 0 0 1px var(--line-2); font-weight: 700; font-size: .9rem; transition: box-shadow .2s, color .2s; }
+.pin__btn:hover { box-shadow: inset 0 0 0 1px var(--yellow); color: var(--yellow); }
+.pin__btn:disabled { opacity: .6; cursor: progress; }
+.pin__btn svg { width: 18px; height: 18px; color: var(--yellow); }
+.pin__note { font-size: .86rem; line-height: 1.45; color: #b9b6af; }
+.pin__note button { margin-left: 6px; color: var(--yellow); text-decoration: underline; text-underline-offset: 3px; }
 .preview { padding: 16px; border-radius: 14px; background: #0b141a; border: 1px solid var(--line); }
 .preview__label { color: var(--mute); margin-bottom: 12px; }
 .preview__bubble { margin-left: auto; max-width: 94%; width: fit-content; padding: 12px 14px; border-radius: 12px 12px 2px 12px; background: #005c4b; color: #e9edef; font: 400 .93rem/1.5 var(--body); white-space: pre-wrap; word-break: break-word; }

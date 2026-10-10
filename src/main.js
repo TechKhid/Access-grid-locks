@@ -44,7 +44,8 @@
      Reports what a visitor does to /api/track, which forwards it to ntfy (see api/track.js).
      - Tag a link you send someone: add ?for=Name and their visits are labelled with it.
      - Stop your own device from reporting: open any page once with ?notrack=1 (undo with ?notrack=0).
-     Nothing typed into the checkout or quote forms (names, phone numbers, areas) is ever sent. */
+     Nothing typed into the checkout or quote forms (names, phone numbers, areas) is ever sent.
+     An exact location is sent only after the visitor taps "Use my current location". */
   const visit = (() => {
     const PAGES = { index: 'Home', shop: 'Shop', 'smart-locks': 'Smart locks', hotels: 'Hotels', cctv: 'CCTV', quote: 'Quote', showroom: 'Showroom' };
     const page = PAGES[document.body.dataset.page] || document.title;
@@ -74,13 +75,24 @@
     const save = () => write(sessionStorage, 'accessgrid-visit', s);
     save();
 
+    // What the browser will say about the device when asked; api/track.js turns it into a readable line.
+    async function describeDevice() {
+      const d = { screen: `${window.screen.width}x${window.screen.height}`, net: navigator.connection?.type || '', tz: '' };
+      try { d.tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch { /* no Intl */ }
+      try {
+        const more = await navigator.userAgentData?.getHighEntropyValues(['model', 'platformVersion']);
+        if (more) Object.assign(d, { model: more.model || '', platform: more.platform || '', version: more.platformVersion || '' });
+      } catch { /* browser keeps these to itself (Safari, Firefox) */ }
+      return d;
+    }
+
     const post = (payload) => {
       if (off) return;
-      const body = JSON.stringify({ ...payload, visitor, page });
+      const body = JSON.stringify({ ...payload, visitor, page, device: s.device, pin: s.pin });
       try { if (navigator.sendBeacon && navigator.sendBeacon('/api/track', new Blob([body], { type: 'text/plain' }))) return; } catch { /* fall through */ }
       fetch('/api/track', { method: 'POST', body, keepalive: true }).catch(() => {});
     };
-    if (arriving) post({ type: 'arrive', ref: s.ref });
+    if (arriving) describeDevice().then((d) => { s.device = d; save(); post({ type: 'arrive', ref: s.ref }); });
 
     // time counts only while the page is actually on screen
     let since = document.visibilityState === 'visible' ? Date.now() : 0;
@@ -129,8 +141,61 @@
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') summarise(); else since = Date.now(); });
     addEventListener('pagehide', summarise);
 
-    return { track };
+    // the visitor's own pin, shared on purpose from checkout or the quote builder
+    const pin = () => s.pin || null;
+    function setPin(next, purpose) {
+      s.pin = next || undefined;
+      save();
+      if (next) track('Shared their location', { hot: 'pin', detail: `For their ${purpose}` });
+    }
+
+    return { track, pin, setPin };
   })();
+
+  /* ───────── Location pin: only ever on the visitor's say-so ─────────
+     Addresses are hard to describe, so checkout and the quote builder offer to attach a map pin.
+     The browser asks permission, the note says where it goes, and the visitor can remove it. */
+  const pinBoxes = [];
+  const pinUrl = () => { const p = visit.pin(); return p ? `https://maps.google.com/?q=${p.lat},${p.lon}` : ''; };
+  function wirePin(box, purpose, onChange = () => {}) {
+    if (!box) return;
+    const btn = $('[data-pin-get]', box);
+    const label = $('span', btn);
+    const note = $('[data-pin-note]', box);
+    let problem = '';
+    const paint = () => {
+      const p = visit.pin();
+      btn.hidden = Boolean(p);
+      note.hidden = !p && !problem;
+      note.innerHTML = p
+        ? `Location pinned${p.acc ? ` (within about ${p.acc} m)` : ''}. It goes with your ${purpose} so we can find you.<button type="button" data-pin-clear>Remove</button>`
+        : problem;
+      onChange();
+    };
+    const idle = () => { btn.disabled = false; label.textContent = 'Use my current location'; };
+    btn.addEventListener('click', () => {
+      if (!navigator.geolocation) { problem = 'This browser cannot share a location. Please type your area instead.'; paint(); return; }
+      btn.disabled = true;
+      label.textContent = 'Finding you…';
+      navigator.geolocation.getCurrentPosition((pos) => {
+        idle();
+        problem = '';
+        visit.setPin({ lat: Number(pos.coords.latitude.toFixed(5)), lon: Number(pos.coords.longitude.toFixed(5)), acc: Math.round(pos.coords.accuracy) }, purpose);
+        pinBoxes.forEach((repaint) => repaint());
+      }, () => {
+        idle();
+        problem = 'We could not get your location. Please type your area instead.';
+        paint();
+      }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
+    });
+    box.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-pin-clear]')) return;
+      visit.setPin(null);
+      pinBoxes.forEach((repaint) => repaint());
+    });
+    pinBoxes.push(paint);
+    paint();
+  }
 
   /* ───────── Lock component ───────── */
   const KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#'];
@@ -473,6 +538,7 @@
       ? 'We hold your order and call you to confirm.'
       : PAYSTACK_PUBLIC_KEY ? 'Secure payment by Paystack.' : 'Demo checkout: nothing is charged.';
     $('#coAreaWrap').hidden = picked('fulfil') !== 'Delivery + installation';
+    $('#coPin').hidden = picked('fulfil') !== 'Delivery + installation';
   }
   form.addEventListener('change', updatePayButton);
 
@@ -519,6 +585,7 @@
       `Total: ${money(order.total)}`,
       '',
       `${order.fulfil}${order.area ? ` — ${order.area}` : ''}`,
+      ...(order.pin ? [`Pin: ${order.pin}`] : []),
       `Payment: ${paidNote}`,
       `Name: ${order.name}`,
       `Phone: ${order.phone}`,
@@ -537,13 +604,14 @@
       email: $('#coEmail').value.trim(),
       fulfil: picked('fulfil'),
       area: picked('fulfil') === 'Delivery + installation' ? $('#coArea').value.trim() : '',
+      pin: picked('fulfil') === 'Delivery + installation' ? pinUrl() : '',
       pay: picked('pay'),
     };
     if (!order.items.length) return fail('Your cart is empty.');
     if (order.name.length < 2) return fail('Please enter your name.', $('#coName'));
     if (order.phone.replace(/\D/g, '').length < 9) return fail('Please enter a phone number we can reach you on.', $('#coPhone'));
     if (order.email && !$('#coEmail').checkValidity()) return fail('That email address does not look right.', $('#coEmail'));
-    if (order.fulfil === 'Delivery + installation' && !order.area) return fail('Tell us the area to deliver to.', $('#coArea'));
+    if (order.fulfil === 'Delivery + installation' && !order.area && !order.pin) return fail('Tell us the area to deliver to, or share your location.', $('#coArea'));
 
     const online = order.pay !== 'showroom';
     const demo = online && !PAYSTACK_PUBLIC_KEY;
@@ -582,6 +650,7 @@
 
   renderCart();
   updatePayButton();
+  wirePin($('#coPin'), 'order');
 
   /* ───────── Smart locks page: the lock you can operate ───────── */
   const demoLock = $('[data-lock="demo"]');
@@ -745,6 +814,7 @@
         `• Doors: ${doors}`,
         ...(fArea.value.trim() ? [`• Area: ${fArea.value.trim()}`] : []),
         ...(fName.value.trim() ? [`• Name: ${fName.value.trim()}`] : []),
+        ...(pinUrl() ? [`• Pin: ${pinUrl()}`] : []),
       ].join('\n');
       $('#msgPreview').textContent = msg;
       $('#waSend').href = waLink(msg);
@@ -783,6 +853,7 @@
     doorsRange.addEventListener('input', () => setDoors(Number(doorsRange.value)));
     [fArea, fName].forEach((f) => f.addEventListener('input', render));
     $('#builder').addEventListener('submit', (e) => e.preventDefault());
+    wirePin($('#quotePin'), 'quote request', render);
     $('#waSend').addEventListener('click', () => visit.track('Sent a quote request', { hot: 'quote', detail: `${quote.space} · ${[...quote.needs].join(', ') || 'not sure yet'} · ${quote.doors >= 200 ? '200+' : quote.doors} doors` }));
     render();
   }

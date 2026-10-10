@@ -152,6 +152,10 @@
           <label><input type="radio" name="fulfil" value="Pick up at showroom"><span><b>Pick up at the showroom</b><small>Mile 11, near West Hills Mall.</small></span></label>
         </fieldset>
         <label class="field" id="coAreaWrap"><span class="mono">Delivery area</span><input type="text" id="coArea" autocomplete="address-level2" placeholder="e.g. Weija, Kasoa, East Legon" maxlength="80"></label>
+        <div class="pin" id="coPin">
+          <button type="button" class="pin__btn" data-pin-get><svg aria-hidden="true"><use href="#t-pin"/></svg><span>Use my current location</span></button>
+          <p class="pin__note" data-pin-note hidden></p>
+        </div>
 
         <fieldset class="opts">
           <legend>Payment</legend>
