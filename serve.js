@@ -15,7 +15,8 @@ build({ clean: true });
 http.createServer((req, res) => {
   const urlPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
   if (urlPath === '/api/track') { track(req, res); return; }
-  const file = path.join(OUT, path.normalize(urlPath === '/' ? '/index.html' : urlPath));
+  const wanted = urlPath.endsWith('/') ? `${urlPath}index.html` : path.extname(urlPath) ? urlPath : `${urlPath}/index.html`;
+  const file = path.join(OUT, path.normalize(wanted));
   if (!file.startsWith(OUT)) { res.writeHead(403).end(); return; }
   if (file.endsWith('.html')) { try { build(); } catch (err) { console.error(err.message); } }
   fs.readFile(file, (err, data) => {

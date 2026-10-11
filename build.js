@@ -1,6 +1,7 @@
 // Assembles the site into public/, which is what gets deployed:
 //   src/layout.html + src/pages/<page>.html → public/<page>.html
 //   src/styles.css, src/main.js             → public/
+//   src/proposal/index.html                 → public/proposal/ (the client quote)
 //   only the images the pages actually use  → public/assets/
 // Run `node build.js` (or `npm run build`). `node serve.js` does it for you on every page load.
 const fs = require('fs');
@@ -47,6 +48,12 @@ function build({ clean = false } = {}) {
       .split(`data-nav="${page.id}"`).join(`data-nav="${page.id}" aria-current="page"`);
     fs.writeFileSync(path.join(OUT, `${page.id}.html`), html);
   }
+  // the client quote is a standalone page, published at /proposal/
+  const proposal = read('proposal/index.html');
+  everything += proposal;
+  fs.mkdirSync(path.join(OUT, 'proposal'), { recursive: true });
+  fs.writeFileSync(path.join(OUT, 'proposal', 'index.html'), proposal);
+
   for (const file of STATIC) {
     everything += read(file);
     fs.copyFileSync(path.join(SRC, file), path.join(OUT, file));

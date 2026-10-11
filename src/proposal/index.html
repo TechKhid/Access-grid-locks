@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AccessGrid Solutions — Website Quote</title>
+  <meta name="description" content="Cost breakdown for the AccessGrid Solutions website and online shop.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0a0a0b">
+  <link rel="icon" href="../assets/ig/logo-profile.jpg">
+  <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0a0a0b; --ink-2: #111113; --ink-3: #19191c;
+      --line: rgba(255, 255, 255, .1); --line-2: rgba(255, 255, 255, .2);
+      --yellow: #ffc21a; --text: #edeae3; --soft: #c2bfb8; --mute: #9b9993; --ok: #2bd970;
+      --display: "Clash Display", "Arial Narrow", sans-serif;
+      --body: "Satoshi", "Segoe UI", sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --gutter: clamp(18px, 5vw, 56px);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { margin: 0; background: var(--ink); color: var(--text); font: 400 17px/1.5 var(--body); -webkit-font-smoothing: antialiased; }
+    h1, h2, h3, p, ul, ol, dl, dd, table { margin: 0; padding: 0; }
+    ul, ol { list-style: none; }
+    a { color: var(--yellow); text-underline-offset: 3px; }
+    img { display: block; max-width: 100%; height: auto; }
+    .mono { font-family: var(--mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; }
+    .doc { width: 100%; max-width: 900px; margin-inline: auto; padding: clamp(24px, 5vw, 52px) var(--gutter) 64px; }
+
+    /* cover */
+    .logo { width: auto; height: 48px; margin-bottom: clamp(24px, 4vw, 40px); }
+    .badge { display: inline-block; padding: 6px 10px; border-radius: 4px; background: var(--yellow); color: var(--ink); font-weight: 500; }
+    h1 { margin: 16px 0; font: 600 clamp(2.3rem, 7.6vw, 4.4rem)/.94 var(--display); letter-spacing: -.03em; }
+    h1 em { font-style: normal; color: var(--yellow); }
+    .lede { max-width: 34em; font-size: 1.05rem; color: var(--soft); }
+    .meta { display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; gap: 16px 24px; margin-top: 28px; padding-bottom: 26px; border-bottom: 1.5px solid var(--text); }
+    .meta dt { color: var(--mute); margin-bottom: 4px; }
+    .meta dd { font-weight: 700; }
+    .heads { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 10px; margin-top: 26px; }
+    .head { padding: 16px 18px 18px; border-radius: 12px; background: var(--ink-2); border: 1px solid var(--line); }
+    .head b { display: block; font: 600 clamp(1.6rem, 3.4vw, 2.1rem)/1.1 var(--display); letter-spacing: -.02em; }
+    .head small { display: block; margin-top: 6px; font-size: .88rem; line-height: 1.35; color: #b9b6af; }
+    .head--main { background: var(--yellow); border-color: var(--yellow); color: var(--ink); }
+    .head--main small { color: rgba(10, 10, 11, .78); }
+
+    /* sections */
+    section { margin-top: clamp(44px, 7vw, 68px); }
+    .part { color: var(--mute); margin-bottom: 8px; }
+    h2 { font: 600 clamp(1.7rem, 4.6vw, 2.4rem)/1 var(--display); letter-spacing: -.025em; margin-bottom: 16px; }
+    .intro { max-width: 40em; color: var(--soft); margin-bottom: 18px; }
+
+    /* build */
+    .item { display: grid; grid-template-columns: 1fr auto; gap: 4px 20px; padding: 14px 0; border-top: 1px solid var(--line); }
+    .item h3 { font: 700 1.02rem/1.3 var(--body); }
+    .item b { font-weight: 700; white-space: nowrap; }
+    .item p { grid-column: 1 / 2; font-size: .93rem; color: #b9b6af; }
+    .tag { display: inline-block; margin-left: 8px; padding: 2px 6px; border-radius: 4px; border: 1px solid var(--yellow); color: var(--yellow); font: 500 .56rem var(--mono); letter-spacing: .1em; text-transform: uppercase; vertical-align: middle; white-space: nowrap; }
+    .sum { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-top: 16px; border-top: 1.5px solid var(--text); }
+    .sum b { font: 600 clamp(1.5rem, 4vw, 2rem)/1 var(--display); letter-spacing: -.02em; color: var(--yellow); }
+
+    /* payment */
+    .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .tile { padding: 16px 18px; border-radius: 12px; background: var(--ink-2); border: 1px solid var(--line); }
+    .tile .mono { color: var(--mute); }
+    .tile b { display: block; margin: 8px 0 6px; font: 600 1.5rem/1.1 var(--display); letter-spacing: -.02em; }
+    .tile p { font-size: .92rem; color: #b9b6af; }
+
+    /* running costs */
+    .costs { width: 100%; border-collapse: collapse; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: .94rem; }
+    .costs th { padding: 12px 16px; text-align: left; font: 400 .62rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--mute); background: var(--ink-2); }
+    .costs td { padding: 13px 16px; vertical-align: top; border-top: 1px solid var(--line); color: var(--soft); }
+    .costs td:first-child b { display: block; color: var(--text); }
+    .costs td:first-child small { color: var(--mute); font-size: .82rem; }
+    .costs td:last-child, .costs th:last-child { text-align: right; white-space: nowrap; font-weight: 700; color: var(--ok); }
+    .costs th:last-child { color: var(--mute); font-weight: 400; }
+    .costs tfoot td { font-weight: 700; color: var(--text); background: var(--ink-2); }
+    sup a { text-decoration: none; font-size: .72em; }
+    .note { margin-top: 14px; max-width: 44em; font-size: .93rem; color: #b9b6af; }
+    .note b { color: var(--text); }
+
+    /* timeline, needs, sources */
+    .weeks { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .weeks li { padding-top: 12px; border-top: 2px solid var(--yellow); }
+    .weeks b { display: block; margin-bottom: 4px; }
+    .weeks span { font-size: .9rem; color: #b9b6af; }
+    .needs { counter-reset: n; display: grid; gap: 10px; max-width: 44em; }
+    .needs li { position: relative; padding-left: 34px; color: var(--soft); counter-increment: n; }
+    .needs li::before { content: counter(n, decimal-leading-zero); position: absolute; left: 0; top: .25em; font: 500 .7rem var(--mono); color: var(--yellow); }
+    .needs b { color: var(--text); }
+    .end { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+    .btn { display: inline-flex; align-items: center; padding: .95em 1.3em; border-radius: 8px; background: var(--yellow); color: var(--ink); font-weight: 700; text-decoration: none; }
+    .btn[hidden] { display: none; }
+    .btn--ghost { background: none; color: var(--text); box-shadow: inset 0 0 0 1px var(--line-2); }
+    .sources { margin-top: clamp(40px, 6vw, 56px); padding-top: 18px; border-top: 1px solid var(--line); font-size: .82rem; line-height: 1.6; color: var(--mute); }
+
+    @media (max-width: 720px) {
+      body { font-size: 16px; }
+      .meta { grid-template-columns: 1fr 1fr; justify-content: start; }
+      .heads, .trio { grid-template-columns: 1fr; }
+      .weeks { grid-template-columns: 1fr 1fr; }
+      .costs th:nth-child(2), .costs td:nth-child(2) { display: none; } /* the price detail moves under the service name */
+      .costs td:first-child small { display: block; margin-top: 2px; }
+      .costs .detail { display: block; }
+    }
+    @media (min-width: 721px) { .costs .detail { display: none; } }
+    @media print {
+      body { background: #fff; color: #111; font-size: 11pt; }
+      .doc { max-width: none; padding: 0; }
+      .head, .tile, .costs th, .costs tfoot td { background: #f4f4f4 !important; border-color: #ccc; }
+      .head--main { background: #ffc21a !important; }
+      .lede, .intro, .item p, .tile p, .costs td, .needs li, .note, .weeks span, .head small { color: #333; }
+      .costs td:last-child { color: #111; }
+      .logo { filter: invert(1); }
+      .end { display: none; }
+      section { break-inside: avoid; margin-top: 24pt; }
+    }
+  </style>
+</head>
+<body>
+<main class="doc">
+  <img class="logo" src="../assets/img/logo-white.png" width="130" height="63" alt="AccessGrid Solutions Ltd">
+  <span class="badge mono">Quote</span>
+  <h1>AccessGrid Solutions website &amp; <em>online shop</em></h1>
+  <p class="lede">Customers order and pay on your site. You get every order on your phone, confirm the fit as you do now, and manage products and prices yourself.</p>
+
+  <dl class="meta">
+    <div><dt class="mono">Prepared for</dt><dd>AccessGrid Solutions Ltd</dd></div>
+    <div><dt class="mono">Prepared by</dt><dd>Samuel</dd></div>
+    <div><dt class="mono">Date</dt><dd data-q="date"></dd></div>
+    <div><dt class="mono">Valid until</dt><dd data-q="validUntil"></dd></div>
+  </dl>
+
+  <div class="heads">
+    <div class="head head--main"><b data-q="total"></b><small>One-time build fee</small></div>
+    <div class="head"><b>≈ <span data-q="monthly"></span></b><small>A month in running costs, paid to the providers</small></div>
+    <div class="head"><b>1.95%</b><small>Paystack fee on each online payment</small></div>
+  </div>
+
+  <section>
+    <p class="part mono">1 · What you get</p>
+    <h2>The build</h2>
+    <div id="items"></div>
+    <p class="sum"><span class="mono">Total</span><b data-q="total"></b></p>
+  </section>
+
+  <section>
+    <p class="part mono">2 · How you pay me</p>
+    <h2>Payment &amp; support</h2>
+    <div class="trio">
+      <div class="tile"><span class="mono">To start</span><b data-q="half"></b><p>50% deposit. Work starts the day it lands.</p></div>
+      <div class="tile"><span class="mono">At launch</span><b data-q="half"></b><p>Once the site is live and you've placed a real test order.</p></div>
+      <div class="tile"><span class="mono">After launch</span><b>2 months free</b><p>Fixes and small changes. After that <span data-q="support"></span>, only in months you ask for changes.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="part mono">3 · Paid by you, straight to each provider</p>
+    <h2>Running costs</h2>
+    <table class="costs">
+      <thead><tr><th>Service</th><th>Price</th><th>At ~<span data-q="orders"></span> orders a week</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>Domain</b><small>accessgridsolutions.com, at Cloudflare</small><small class="detail">US$10.46 a year <sup><a href="#src">1</a></sup></small></td>
+          <td>US$10.46 a year. About US$11.17 from 1 November <sup><a href="#src">1</a></sup></td>
+          <td>≈ GHS 130 / year</td>
+        </tr>
+        <tr>
+          <td><b>Hosting, database, photo and video storage</b><small>Cloudflare</small><small class="detail">Free at your volume <sup><a href="#src">2</a></sup></small></td>
+          <td>Free at your volume <sup><a href="#src">2</a></sup></td>
+          <td>GHS 0</td>
+        </tr>
+        <tr>
+          <td><b>WhatsApp alerts to you</b><small>Meta</small><small class="detail">US$0.004 a message <sup><a href="#src">3</a></sup></small></td>
+          <td>US$0.004 a message <sup><a href="#src">3</a></sup></td>
+          <td>≈ <span data-q="waCost"></span> / month</td>
+        </tr>
+        <tr>
+          <td><b>SMS to you and your customers</b><small>Arkesel</small><small class="detail">GHS 0.031 an SMS <sup><a href="#src">4</a></sup></small></td>
+          <td>GHS 0.031 an SMS <sup><a href="#src">4</a></sup></td>
+          <td>≈ <span data-q="smsCost"></span> / month</td>
+        </tr>
+      </tbody>
+      <tfoot><tr><td>Monthly total</td><td></td><td>≈ <span data-q="monthly"></span></td></tr></tfoot>
+    </table>
+    <p class="note"><b>Paystack takes 1.95% of each online payment</b> and nothing monthly <sup><a href="#src">5</a></sup>. On a GHS 1,500 lock that's GHS 29.25. Cash and showroom sales carry no fee.</p>
+    <p class="note"><b>You own everything.</b> The domain, hosting, Paystack, WhatsApp and SMS accounts are in your company's name, and you get a full copy of the code. You can remove me at any time without the site going down.</p>
+  </section>
+
+  <section>
+    <p class="part mono">4 · About 4 weeks from the deposit</p>
+    <h2>Timeline</h2>
+    <ol class="weeks">
+      <li><b>Week 1</b><span>Accounts, domain, your photos and price list</span></li>
+      <li><b>Week 2</b><span>Live site with payments</span></li>
+      <li><b>Week 3</b><span>Hotel section, lock videos, dashboard</span></li>
+      <li><b>Week 4</b><span>Alerts, test orders, training, launch</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <p class="part mono">5 · To get started</p>
+    <h2>What I need from you</h2>
+    <ol class="needs">
+      <li><b>The <span data-q="half"></span> deposit</b> by MoMo or bank transfer.</li>
+      <li><b>Your logo file, product photos, demo videos and price list</b> for locks, cameras and hotel systems.</li>
+      <li><b>Your installation charges:</b> one fixed fee, or by door and area.</li>
+      <li><b>A Paystack account for the business</b> (I can help you open one) and your business registration certificate.</li>
+      <li><b>A new SIM and a Facebook account</b>, to set up your WhatsApp alerts. The SIM must not already be on WhatsApp.</li>
+      <li><b>A card that pays in US dollars</b>, for the domain and the WhatsApp charges.</li>
+    </ol>
+    <div class="end">
+      <a class="btn" id="acceptBtn" href="#" target="_blank" rel="noopener" hidden>Reply on WhatsApp</a>
+      <a class="btn btn--ghost" href="../index.html">See the demo again</a>
+    </div>
+  </section>
+
+  <p class="sources" id="src">
+    Prices checked <span data-q="date"></span>.
+    1 Cloudflare .com price: <a href="https://cfdomainpricing.com/" target="_blank" rel="noopener">cfdomainpricing.com</a>; rise on 1 November: <a href="https://tldes.com/pages/com-price-increase-2026" target="_blank" rel="noopener">tldes.com</a>. The name was unregistered at the .com registry on that date.
+    2 Cloudflare free limits: <a href="https://developers.cloudflare.com/workers/platform/pricing/" target="_blank" rel="noopener">developers.cloudflare.com</a>.
+    3 WhatsApp utility message rate, as listed by <a href="https://arkesel.com/whatsapp-business-api/" target="_blank" rel="noopener">Arkesel</a>; Meta's rate card: <a href="https://developers.facebook.com/docs/whatsapp/pricing" target="_blank" rel="noopener">developers.facebook.com</a>.
+    4 <a href="https://arkesel.com/pricing" target="_blank" rel="noopener">Arkesel SMS pricing</a>, no-expiry credit.
+    5 <a href="https://support.paystack.com/en/articles/2130306" target="_blank" rel="noopener">Paystack charges, Ghana</a>.
+    Dollar prices converted at GHS <span data-q="rate"></span> per US$ (<a href="https://www.modernghana.com/news/1533421/october-5-cedi-sells-at-ghs1225-on-forex-market.html" target="_blank" rel="noopener">forex market, early October</a>). Provider prices can change.
+  </p>
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ───────── Everything you might want to change is here ───────── */
+  const QUOTE = {
+    date: '11 October 2026',
+    validUntil: '31 October 2026',
+    supportFee: 300,          // GHS, only in months the client asks for changes
+    ordersAWeek: 5,           // the volume the running costs are shown at
+    whatsapp: '',             // your WhatsApp number in international form, e.g. 233241234567, for the reply button
+    items: [
+      { name: 'Website', price: 1200,
+        text: 'The demo made live on your domain, with your own photos and logo. Lock orders collect the customer\'s door details so you can confirm the fit.' },
+      { name: 'Online payments with Paystack', price: 900,
+        text: 'Locks: 70% at order, then the balance and your installation charge by payment link or at installation. Cameras: full payment first. Every payment is verified, so fake MoMo alerts don\'t count.' },
+      { name: 'Hotel systems section', price: 500, asked: true,
+        text: 'Your hotel lock systems with photos and features, and a request form made for hotels and guesthouses.' },
+      { name: 'Lock demos on every product', price: 400, asked: true,
+        text: 'A demo video on each lock, using your own clips, compressed for mobile data.' },
+      { name: 'Orders dashboard', price: 800,
+        text: 'A private login on your phone. Each order with its door details, and one-tap steps: 70% paid, fit confirmed, balance paid, installation booked, installed.' },
+      { name: 'Edit your own products', price: 600,
+        text: 'Add locks and cameras, change prices, upload photos and videos, mark items out of stock.' },
+      { name: 'Order alerts', price: 500,
+        text: 'WhatsApp and SMS to you for every order and quote request. SMS to the customer at each step.' },
+      { name: 'Setup and handover', price: 300,
+        text: 'Every account opened in your company\'s name, a training session, a how-to guide and a full copy of the code.' },
+    ],
+  };
+  // Provider rates, as listed in the sources at the bottom of the page.
+  const RATE = 12.30;        // GHS per US$
+  const WA_USD = 0.004;      // per WhatsApp message to the owner
+  const SMS_GHS = 0.031;     // per SMS
+  const SMS_PER_ORDER = 4;   // one copy to the owner, three updates to the customer
+
+  const $ = (s) => document.querySelector(s);
+  const ghs = (n, dp = 0) => `GHS ${n.toLocaleString('en-GH', { minimumFractionDigits: dp, maximumFractionDigits: dp })}`;
+  const set = (key, value) => document.querySelectorAll(`[data-q="${key}"]`).forEach((el) => { el.textContent = value; });
+
+  const total = QUOTE.items.reduce((sum, i) => sum + i.price, 0);
+  $('#items').innerHTML = QUOTE.items.map((i) => `
+    <article class="item">
+      <h3>${i.name}${i.asked ? '<span class="tag">You asked for this</span>' : ''}</h3><b>${ghs(i.price)}</b>
+      <p>${i.text}</p>
+    </article>`).join('');
+
+  const ordersAMonth = (QUOTE.ordersAWeek * 52) / 12;
+  const wa = ordersAMonth * WA_USD * RATE;
+  const sms = Math.round(ordersAMonth * SMS_PER_ORDER) * SMS_GHS;
+  set('total', ghs(total));
+  set('half', ghs(total / 2));
+  set('support', ghs(QUOTE.supportFee));
+  set('date', QUOTE.date);
+  set('validUntil', QUOTE.validUntil);
+  set('orders', QUOTE.ordersAWeek);
+  set('rate', RATE.toFixed(2));
+  set('waCost', ghs(wa, 2));
+  set('smsCost', ghs(sms, 2));
+  set('monthly', ghs(wa + sms, 2));
+
+  // The reply button opens a chat with you, with the total already written.
+  const reply = $('#acceptBtn');
+  if (QUOTE.whatsapp) {
+    reply.href = `https://wa.me/${QUOTE.whatsapp}?text=${encodeURIComponent(`Hello Samuel, I've read the quote for the AccessGrid Solutions website (${ghs(total)}).`)}`;
+    reply.hidden = false;
+  }
+
+  /* ───────── Visit notifications: the same visitor and session the main site uses (see api/track.js) ───────── */
+  const read = (area, key) => { try { return JSON.parse(area.getItem(key)); } catch { return null; } };
+  const write = (area, key, value) => { try { area.setItem(key, JSON.stringify(value)); } catch { /* private mode */ } };
+  const params = new URLSearchParams(location.search);
+  if (params.has('notrack')) write(localStorage, 'accessgrid-notrack', params.get('notrack') !== '0');
+  const off = read(localStorage, 'accessgrid-notrack') === true;
+  const visitor = read(localStorage, 'accessgrid-visitor') || { id: Math.random().toString(36).slice(2, 6), visits: 0, label: '' };
+  const label = (params.get('for') || '').replace(/[^\w .'-]/g, '').trim().slice(0, 40);
+  if (label) visitor.label = label;
+  let s = read(sessionStorage, 'accessgrid-visit');
+  const arriving = !s;
+  if (arriving) { visitor.visits += 1; s = { active: 0, pages: [], actions: [], sent: '', ref: '' }; }
+  visitor.visits = Math.max(1, visitor.visits);
+  write(localStorage, 'accessgrid-visitor', visitor);
+  const PAGE = 'Cost breakdown';
+  if (s.pages[s.pages.length - 1] !== PAGE) s.pages.push(PAGE);
+  const save = () => write(sessionStorage, 'accessgrid-visit', s);
+  save();
+  const post = (payload) => {
+    if (off) return;
+    const body = JSON.stringify({ ...payload, visitor, page: PAGE, device: s.device, pin: s.pin });
+    try { if (navigator.sendBeacon && navigator.sendBeacon('/api/track', new Blob([body], { type: 'text/plain' }))) return; } catch { /* fall through */ }
+    fetch('/api/track', { method: 'POST', body, keepalive: true }).catch(() => {});
+  };
+  if (arriving) {
+    s.device = { screen: `${window.screen.width}x${window.screen.height}`, net: (navigator.connection && navigator.connection.type) || '', tz: Intl.DateTimeFormat().resolvedOptions().timeZone || '' };
+    save();
+    post({ type: 'arrive', ref: '' });
+  }
+  let since = document.visibilityState === 'visible' ? Date.now() : 0;
+  let internal = false;
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href]');
+    if (a && a.origin === location.origin && a.target !== '_blank' && a.pathname !== location.pathname) { internal = true; setTimeout(() => { internal = false; }, 1500); }
+    if (a && a.id === 'acceptBtn') { s.actions.push('Tapped reply on the quote'); save(); post({ type: 'event', name: 'whatsapp', detail: 'Replied from the cost breakdown' }); }
+  }, true);
+  const summarise = () => {
+    if (since) { s.active += Date.now() - since; since = 0; }
+    save();
+    if (internal) return;
+    const mark = `${s.pages.length}|${s.actions.length}|${Math.floor(s.active / 30000)}`;
+    if (mark === s.sent || (s.active < 3000 && !s.actions.length && s.pages.length < 2)) return;
+    post({ type: 'summary', seconds: Math.round(s.active / 1000), pages: s.pages, actions: s.actions, update: Boolean(s.sent) });
+    s.sent = mark;
+    save();
+  };
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') summarise(); else since = Date.now(); });
+  addEventListener('pagehide', summarise);
+})();
+</script>
+</body>
+</html>
