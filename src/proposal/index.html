@@ -216,6 +216,7 @@
     </ol>
     <div class="end">
       <a class="btn" id="acceptBtn" href="#" target="_blank" rel="noopener" hidden>Reply on WhatsApp</a>
+      <a class="btn btn--ghost" id="callBtn" href="#" hidden>Call me</a>
       <a class="btn btn--ghost" href="../index.html">See the demo again</a>
     </div>
   </section>
@@ -241,7 +242,7 @@
     validUntil: '31 October 2026',
     supportFee: 300,          // GHS, only in months the client asks for changes
     ordersAWeek: 5,           // the volume the running costs are shown at
-    whatsapp: '',             // your WhatsApp number in international form, e.g. 233241234567, for the reply button
+    phone: '233559381631',   // your WhatsApp and call line, in international form, for the reply and call buttons
     items: [
       { name: 'Website', price: 1200,
         text: 'The demo made live on your domain, with your own photos and logo. Lock orders collect the customer\'s door details so you can confirm the fit.' },
@@ -292,10 +293,12 @@
   set('smsCost', ghs(sms, 2));
   set('monthly', ghs(wa + sms, 2));
 
-  // The reply button opens a chat with you, with the total already written.
+  // The reply button opens a chat with you, with the total already written; the call button dials the same line.
   const reply = $('#acceptBtn');
-  if (QUOTE.whatsapp) {
-    reply.href = `https://wa.me/${QUOTE.whatsapp}?text=${encodeURIComponent(`Hello Samuel, I've read the quote for the AccessGrid Solutions website (${ghs(total)}).`)}`;
+  if (QUOTE.phone) {
+    $('#callBtn').href = `tel:+${QUOTE.phone}`;
+    $('#callBtn').hidden = false;
+    reply.href = `https://wa.me/${QUOTE.phone}?text=${encodeURIComponent(`Hello Samuel, I've read the quote for the AccessGrid Solutions website (${ghs(total)}).`)}`;
     reply.hidden = false;
   }
 
@@ -334,6 +337,7 @@
     const a = e.target.closest('a[href]');
     if (a && a.origin === location.origin && a.target !== '_blank' && a.pathname !== location.pathname) { internal = true; setTimeout(() => { internal = false; }, 1500); }
     if (a && a.id === 'acceptBtn') { s.actions.push('Tapped reply on the quote'); save(); post({ type: 'event', name: 'whatsapp', detail: 'Replied from the cost breakdown' }); }
+    if (a && a.id === 'callBtn') { s.actions.push('Tapped call on the quote'); save(); post({ type: 'event', name: 'call', detail: 'Called from the cost breakdown' }); }
   }, true);
   const summarise = () => {
     if (since) { s.active += Date.now() - since; since = 0; }
